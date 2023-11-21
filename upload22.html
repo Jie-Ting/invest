@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<head>
+  <title>Drag and Drop File Upload</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <link rel="shortcut icon" href="/assets/favicon.ico">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/upload.css">
+</head>
+
+<body>
+<ul class="top-menu" id="top-menu">
+		<div><a href="index.html"><img class="logo" id="" src="img/logo.png"/></div>
+	    <li><a href="user.html"><img class="small" src="img/user.png"/></a>
+        </li>
+		<li><a href="like.html"><img class="small" src="img/like.png"/></a>
+        </li>
+		<li>
+			<img class="small" id="cart-icon" src="img/shopping-cart.png"/>
+			<div class="cart">
+                <h2 class="cart-title">購物車</h2>
+                <!-- Content -->
+                <div class="cart-content"></div>
+                <!-- Total -->
+                <div class="total">
+                    <div class="total-title">總價</div>
+                    <div class="total-price">$0</div>
+                </div>
+                <!-- Buy Button -->
+                <button type="button" class="btn-buy">前往結帳</button>
+                <!-- Cart Close -->
+                <i class='bx bx-x' id="close-cart"></i>
+			</div>
+        </li>
+        <li>
+			<div class="search">
+				<input type="search" id="search" placeholder="Search..."/>
+				<button id="btn-search">
+					<img id="" src="img/magnifier.png"/>
+				</button>
+			</div>
+        </li>
+	</ul>
+	<!--左側選單-->
+	<ul class="left-menu" id="left-menu">
+        <li><a href="index.html#all">All</a>
+        </li>
+        <li><a href="index.html#new">News</a>
+        </li>
+        <li><a href="upload2.html">Sell</a>
+        </li>
+		<li><a href="history.html">History</a>
+        </li>
+        <li><a href="form.html">Contact us</a>
+        </li>
+	</ul>
+	<div class = "allupload">
+	<h1 id="topic">我要併單!</h1>
+		<form class="upload" action="#">
+			<div class="box">
+				<p>商品名稱</p>
+				<input type="text" id="title" size="20" required="required"/>
+				</br>
+				<p>商品介紹</p>
+				<textarea id="intro" rows="3" required="required"></textarea>
+				</br>
+				<p>商品連結/產品出產地</p>
+				<textarea id="link" rows="3"></textarea>
+				</br>
+				<button class="btn" id ="uploadbtn">發布</button>
+			</div>	
+		</form>
+		
+	</div>
+	<div class="drop-zone">
+		<span class="drop-zone__prompt">將文件拖放到此處或單擊上傳</span>
+		<input type="file" name="myFile" class="drop-zone__input">
+		</div>
+	<h2>這是範例</h2>
+	<div class="list" id="list">
+		<div class="article">
+			<h2>記憶眠坐墊</h2>
+			<p>這是一款兼具舒適與美觀的坐墊!真的超級推薦，我們宿舍一人一個!</br>
+			   歡迎來337試坐~</p>
+			<span>$200</span>
+			<a href="https://detail.tmall.com/item_o.htm?abbucket=14&id=652118715282&ns=1&spm=a230r.1.14.1.60557b1e8CH4J6">
+					🔗淘寶連結</a>
+			<a href="index.html" class="book-now btn">立即購買</a>
+			<div class="pic"><img src="img/product1.jpg" alt=""></div>
+		</div>
+	</div>
+	
+  <script>
+	// forEach() 方法會將陣列內的每個元素，皆傳入並執行給定的函式一次，把0的每個元素，傳到function(inputElement)
+	// Element.closest()方法使用來獲取：匹配特定選擇器與離開當前元素最近的祖先元素（也可以是當前元素本身）。如果匹配不到，則返回null。
+	  document.querySelectorAll(".drop-zone__input").forEach(function(inputElement) {
+	  const dropZoneElement = inputElement.closest(".drop-zone");
+	// 觸發點擊事件
+	  dropZoneElement.addEventListener("click", function(e){
+		inputElement.click();
+	  });
+	// 當圖框改變時，從無到有 or 換圖
+	// 選取的檔案數量不為0(true)才執行--更新預覽圖
+	// 獲取第一個檔案[0]
+	  inputElement.addEventListener("change", function(e) {
+		if (inputElement.files.length); {
+		  updateThumbnail(dropZoneElement, inputElement.files[0]);
+		}
+	  });
+	// dragover把文件拖放進去時觸發
+	// 取消DOM預設功能否則可能無法正確觸發 drag 事件(用法)
+	  dropZoneElement.addEventListener("dragover", function(e) {
+		e.preventDefault();
+	  });
+
+	// 取消DOM預設功能否則可能無法正確觸發 drop 事件(用法)
+	// 檔案成功拖入時觸發
+	// 數據傳輸文件dataTransfer.files檔案數量不為0(true)執行--更新inputElement、更新預覽圖
+	  dropZoneElement.addEventListener("drop", function(e){
+		e.preventDefault();
+
+		if (e.dataTransfer.files.length) {
+		  inputElement.files = e.dataTransfer.files;
+		  updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
+		}
+
+	
+	  });
+	});
+
+
+
+	/**
+	 * Updates the thumbnail on a drop zone element.
+	 *
+	 * @param {HTMLElement} dropZoneElement
+	 * @param {File} file
+	 */
+	 // 更新預縮圖
+	 // 設定預縮圖
+	function updateThumbnail(dropZoneElement, file) {
+	  let thumbnailElement = dropZoneElement.querySelector(".drop-zone__thumb");
+
+	  // 第一次---當提示文字出現(true)--移除提示文字
+	  if (dropZoneElement.querySelector(".drop-zone__prompt")) {
+		dropZoneElement.querySelector(".drop-zone__prompt").remove();
+	  }
+
+	  // 第一次---創造預覽圖，當預覽圖不存在時成立
+	  // 建立新class方便設定css
+	  // 在框框中添加子集---預覽圖
+	  if (!thumbnailElement) {
+		thumbnailElement = document.createElement("div");
+		thumbnailElement.classList.add("drop-zone__thumb");
+		dropZoneElement.appendChild(thumbnailElement);
+	  }
+	  // 設定預覽圖的屬性label=圖片檔名
+	  thumbnailElement.dataset.label = file.name;
+
+	  // 顯示圖片
+	  // startsWish("image/")判斷是否為圖片格式true---讀取圖片，圖片上傳成功---預覽圖出現
+	  // false顯示空白
+	  if (file.type.startsWith("image/")) {
+		const reader = new FileReader();
+		reader.readAsDataURL(file);
+		reader.onload = function() {
+		  thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
+		  var img = thumbnailElement.style.backgroundImage
+		  sumit();
+		};
+	  } else {
+		thumbnailElement.style.backgroundImage = null;
+	  }
+	}
+	
+// 點擊發布
+
+	
+	var sumit = function(){
+		const title = document.getElementById("title");
+		const intro = document.getElementById("intro");
+		const link = document.getElementById("link");
+		const list = document.getElementById("list");
+		const btn = document.getElementsByClassName("btn")[0];
+		
+		btn.addEventListener("click", function(img){
+			list.innerHTML = list.innerHTML +`
+			<div class = "article">
+			<h2>${title.value}</h2>
+			<p>${intro.value}</p>
+			<p>${link.value}</p>
+			<img src="${img}">
+			</div>
+			`;
+			title.value= " ";
+			intro.value= " ";
+			link.value = " ";
+
+		})}	
+	
+
+  </script>
+</body>
